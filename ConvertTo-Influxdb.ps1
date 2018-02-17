@@ -1,13 +1,12 @@
 param(
+	[Parameter(Mandatory=$True)]
+	[ValidateScript({Test-Path $_})] 
 	[string]$Path,
+	[Parameter(Mandatory=$True)]
 	[string]$Database
 )
 
-try {
-	$Csv = Import-Csv -Path $Path
-} catch {
-	Write-Error "failed to import CSV file"
-}
+$Csv = Import-Csv -Path $Path
 
 $Header = $Csv | Get-Member -MemberType 'NoteProperty' | Select-Object -ExpandProperty 'Name'
 
@@ -39,9 +38,11 @@ foreach($Tag in $TagColumnsArray) {
 	}
 }
 
-"# DML"
-"# CONTEXT-DATABASE: $Database"
-"# CONTEXT-RETENTION-POLICY: autogen"
+if($Database) {
+	"# DML"
+	"# CONTEXT-DATABASE: $Database"
+	"# CONTEXT-RETENTION-POLICY: autogen"
+}
 
 foreach($Line in $Csv) {
 	$TagsString = ''
