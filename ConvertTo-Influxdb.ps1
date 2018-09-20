@@ -3,7 +3,9 @@ param(
 	[ValidateScript({Test-Path $_})] 
 	[string]$Path,
 	[Parameter(Mandatory=$True)]
-	[string]$Database
+	[string]$Database,
+	[Parameter(Mandatory=$False)]
+	[string]$Measurement=$False
 )
 
 $Csv = Import-Csv -Path $Path
@@ -64,6 +66,12 @@ foreach($Line in $Csv) {
 	$ValuesString = $ValuesString.Substring(0,$ValuesString.Length-1)
 	$TagsString = $TagsString.Substring(0,$TagsString.Length-1)
 	
-	$Output = $Line.$MeasurementColumn,$TagsString -join ','
+	if($Measurement -ne $False) {
+		$MeasurementName = $Measurement
+	} else {
+		$MeasurementName = $Line.$MeasurementColumn
+	}
+
+	$Output = $MeasurementName,$TagsString -join ','
 	$Output,$ValuesString,$Line.$TimeColumn -join ' '
 }
