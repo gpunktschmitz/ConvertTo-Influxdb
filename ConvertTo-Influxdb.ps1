@@ -64,7 +64,9 @@ foreach($Line in $Csv) {
 	}
 	
 	$ValuesString = $ValuesString.Substring(0,$ValuesString.Length-1)
-	$TagsString = $TagsString.Substring(0,$TagsString.Length-1)
+	if($TagsString) {
+		$TagsString = ',',$TagsString.Substring(0,$TagsString.Length-1) -join ''
+	}
 	
 	if($Measurement -ne $False) {
 		$MeasurementName = $Measurement
@@ -72,6 +74,6 @@ foreach($Line in $Csv) {
 		$MeasurementName = $Line.$MeasurementColumn
 	}
 
-	$Output = $MeasurementName,$TagsString -join ','
+	$Output = $MeasurementName,$TagsString -join ''
 	$Output,$ValuesString,$Line.$TimeColumn -join ' '
 }
